@@ -37,3 +37,24 @@ export function Ziggurat({ className = "", glow = true }: { className?: string; 
     </svg>
   );
 }
+
+// Линейный зиккурат для логотипа в боковом меню (контур, как в макете).
+export function ZigLine({ className = "" }: { className?: string }) {
+  const stairs = [10, 14, 18, 22, 26, 30, 34, 38, 42];
+  return (
+    <svg viewBox="0 0 70 48" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2 46h66" />
+      <path d="M7 46V36h56v10" />
+      <path d="M13 36V26h44v10" />
+      <path d="M19 26V16h32v10" />
+      <path d="M25 16V8h20v8" />
+      <path d="M31 8V3h8v5" />
+      <path d="M35 3V0.5" />
+      <path d="M31.5 46L32 8M38.5 46L38 8" />
+      {stairs.map((y) => (
+        <path key={y} d={`M31.6 ${y}h6.8`} strokeWidth="1" />
+      ))}
+      <path d="M23 21h5M42 21h5M17 31h5M48 31h5M11 41h5M54 41h5" strokeWidth="1" />
+    </svg>
+  );
+}

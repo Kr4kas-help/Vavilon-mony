@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Literata, Onest } from "next/font/google";
+import { Tinos, Onest } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 
-const serif = Literata({
+const serif = Tinos({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
 });
