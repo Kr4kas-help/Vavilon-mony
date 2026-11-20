@@ -136,6 +136,144 @@ h2 { font-size: var(--fs-h2); }
   .bar > i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #C98F2A, #F0C66A); }
 }
 
+/* ---------- Главная: герой-блок, шаги, карточки с картинками ---------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  padding: 1.4rem 1.25rem 1.5rem;
+  background: rgba(20, 13, 7, 0.6);
+}
+.hero-img {
+  position: absolute;
+  inset: 0 0 0 28%;
+  background-size: cover;
+  background-position: 70% 40%;
+  background-repeat: no-repeat;
+  opacity: 0.95;
+  image-rendering: auto;
+  filter: saturate(1.05) contrast(1.02);
+}
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(18, 12, 7, 0.92) 0%, rgba(18, 12, 7, 0.55) 45%, rgba(18, 12, 7, 0.1) 100%),
+    linear-gradient(0deg, rgba(18, 12, 7, 0.65), transparent 40%);
+}
+.hero-title { font-size: clamp(2rem, 5.6vw, 3.1rem); color: #F7EBD0; }
+@media (min-width: 640px) { .hero { padding: 1.9rem 2rem 2rem; } }
+@media (max-width: 639px) {
+  .hero-img { inset: 0; opacity: 0.55; }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.25rem;
+  position: relative;
+}
+.steps::before {
+  content: "";
+  position: absolute;
+  top: 1.55rem;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(232, 184, 79, 0.55), rgba(232, 184, 79, 0.2));
+}
+.step { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.step-dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(217, 164, 65, 0.45);
+  background: #1a1209;
+  color: rgba(241, 230, 204, 0.6);
+}
+.step[data-state="done"] .step-dot { border-color: var(--gold-hi); color: #F0C66A; }
+.step[data-state="now"] .step-dot {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-top: -0.2rem;
+  border-color: var(--gold-hi);
+  color: #F6D98E;
+  background: rgba(60, 38, 12, 0.95);
+  box-shadow: 0 0 22px rgba(232, 184, 79, 0.5), inset 0 0 12px rgba(232, 184, 79, 0.18);
+}
+.step-tick {
+  position: absolute;
+  right: -0.2rem;
+  bottom: -0.1rem;
+  display: grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: #C98F2A;
+  color: #1a1208;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+.step-label { margin-top: 0.5rem; font-size: 0.72rem; line-height: 1.2; color: rgba(241, 230, 204, 0.8); }
+.step[data-state="now"] .step-label { color: #F6D98E; }
+@media (min-width: 640px) {
+  .steps::before { top: 1.75rem; }
+  .step-dot { width: 3.5rem; height: 3.5rem; }
+  .step[data-state="now"] .step-dot { width: 4rem; height: 4rem; }
+  .step-label { font-size: 0.9rem; }
+}
+@media (max-width: 380px) {
+  .step-dot { width: 2.6rem; height: 2.6rem; }
+  .step[data-state="now"] .step-dot { width: 3rem; height: 3rem; }
+  .steps::before { top: 1.3rem; }
+  .step-label { font-size: 0.66rem; }
+}
+
+.lesson { position: relative; display: flex; overflow: hidden; min-height: 11rem; transition: border-color 0.15s; }
+.lesson:hover { border-color: rgba(232, 184, 79, 0.6); }
+.lesson-img {
+  flex: 0 0 38%;
+  background-size: cover;
+  background-position: center;
+  -webkit-mask-image: linear-gradient(to right, #000 70%, transparent);
+  mask-image: linear-gradient(to right, #000 70%, transparent);
+}
+.lesson-go {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: #F0C66A;
+  font-size: 1.2rem;
+}
+@media (max-width: 479px) {
+  .lesson { flex-direction: column; }
+  .lesson-img { flex: 0 0 8rem; -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent); mask-image: linear-gradient(to bottom, #000 65%, transparent); }
+}
+
+.stat-h { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-serif), Georgia, serif; font-size: 1.1rem; }
+.stat-h span { color: #E8B84F; font-size: 1rem; }
+
+.quote { position: relative; overflow: hidden; }
+.quote-img {
+  position: absolute;
+  inset: 0 0 0 38%;
+  background-size: cover;
+  background-position: center 35%;
+  opacity: 0.85;
+}
+
 /* ---------- Оболочка: боковое меню, верхняя панель, нижняя навигация ---------- */
 
 .side {
