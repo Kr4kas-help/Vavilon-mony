@@ -1,4 +1,4 @@
-import { db } from '@/lib/server/redis';
+import { sql } from '@/lib/server/db';
 import { fail, j } from '@/lib/server/http';
 import { userFromRequest } from '@/lib/server/auth';
 
@@ -9,8 +9,9 @@ export async function GET(req: Request) {
   try {
     const user = await userFromRequest(req);
     if (!user) return j({ error: 'Требуется вход.' }, 401);
-    const profile = await db().get<Record<string, unknown>>('profile:' + user.id);
-    return j({ profile: profile ?? null });
+    const s = await sql();
+    const rows = (await s`SELECT data FROM profiles WHERE user_id = ${user.id} LIMIT 1`) as { data: unknown }[];
+    return j({ profile: rows[0]?.data ?? null });
   } catch (e) {
     return fail(e);
   }
@@ -28,7 +29,10 @@ export async function PUT(req: Request) {
     } catch {}
     const p = body?.profile;
     if (!p || typeof p !== 'object' || Array.isArray(p)) return j({ error: 'Некорректные данные.' }, 400);
-    await db().set('profile:' + user.id, p);
+    const s = await sql();
+    await s`INSERT INTO profiles (user_id, data, updated)
+      VALUES (${user.id}, ${JSON.stringify(p)}::jsonb, ${Date.now()}::bigint)
+      ON CONFLICT (user_id) DO UPDATE SET data = EXCLUDED.data, updated = EXCLUDED.updated`;
     return j({ ok: true });
   } catch (e) {
     return fail(e);
@@ -39,7 +43,8 @@ export async function DELETE(req: Request) {
   try {
     const user = await userFromRequest(req);
     if (!user) return j({ error: 'Требуется вход.' }, 401);
-    await db().del('profile:' + user.id);
+    const s = await sql();
+    await s`DELETE FROM profiles WHERE user_id = ${user.id}`;
     return j({ ok: true });
   } catch (e) {
     return fail(e);

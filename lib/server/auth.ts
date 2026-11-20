@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { db } from './redis';
+import { sql } from './db';
 
 export type User = {
   id: string;
@@ -10,6 +10,24 @@ export type User = {
   name?: string;
   created: number;
 };
+
+export function rowToUser(r: Record<string, unknown>): User {
+  return {
+    id: String(r.id),
+    login: r.login ? String(r.login) : null,
+    salt: r.salt ? String(r.salt) : undefined,
+    hash: r.hash ? String(r.hash) : undefined,
+    tg: r.tg ? Number(r.tg) : undefined,
+    name: r.name ? String(r.name) : undefined,
+    created: Number(r.created),
+  };
+}
+
+export async function userById(id: string): Promise<User | null> {
+  const s = await sql();
+  const rows = (await s`SELECT * FROM users WHERE id = ${id} LIMIT 1`) as Record<string, unknown>[];
+  return rows[0] ? rowToUser(rows[0]) : null;
+}
 
 function secret(): string {
   const s = process.env.SESSION_SECRET;
@@ -56,7 +74,7 @@ export async function userFromRequest(req: Request): Promise<User | null> {
   const h = req.headers.get('authorization') || '';
   const uid = readToken(h.startsWith('Bearer ') ? h.slice(7) : null);
   if (!uid) return null;
-  return (await db().get<User>('user:' + uid)) ?? null;
+  return userById(uid);
 }
 
 export function publicUser(u: User) {
@@ -93,8 +111,14 @@ export function verifyInitData(initData: string): { id: number; name: string } |
 
 // Ограничение числа попыток: true, если лимит превышен.
 export async function limited(key: string, max: number, seconds: number): Promise<boolean> {
-  const k = 'rl:' + key;
-  const n = await db().incr(k);
-  if (n === 1) await db().expire(k, seconds);
-  return n > max;
+  const s = await sql();
+  const now = Date.now();
+  const until = now + seconds * 1000;
+  const rows = (await s`
+    INSERT INTO rate_limits (key, n, expires) VALUES (${key}, 1, ${until}::bigint)
+    ON CONFLICT (key) DO UPDATE SET
+      n = CASE WHEN rate_limits.expires < ${now}::bigint THEN 1 ELSE rate_limits.n + 1 END,
+      expires = CASE WHEN rate_limits.expires < ${now}::bigint THEN ${until}::bigint ELSE rate_limits.expires END
+    RETURNING n`) as Record<string, unknown>[];
+  return Number(rows[0]?.n ?? 0) > max;
 }
