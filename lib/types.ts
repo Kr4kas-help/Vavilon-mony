@@ -5,84 +5,21 @@ export type Source = "salary" | "pension" | "business" | "other";
 export type Goal = "debt_free" | "save" | "grow";
 export type Problem = "no_money" | "debts" | "no_saving" | "impulse" | "no_plan";
 export type DebtKind = "credit" | "mortgage" | "installment" | "card" | "other";
-
-export type ExpenseCategory =
-  | "food" | "housing" | "health" | "transport" | "debts" | "cafe" | "fun" | "shopping" | "other";
-
-export type Expense = {
-  id: string;
-  name: string;
-  amount: number;
-  category: ExpenseCategory;
-  necessary: boolean;
-};
-
-export type Debt = {
-  id: string;
-  kind: DebtKind;
-  name: string;
-  balance: number;
-  monthly: number;
-  rate: number;
-};
-
-export type Wish = {
-  id: string;
-  name: string;
-  cost: number;
-  months: number | null;
-};
-
-export type Allocation = {
-  mandatory: number;
-  debt: number;
-  reserve: number;
-  wishes: number;
-  growth: number;
-};
-
+export type ExpenseCategory = "food" | "housing" | "health" | "transport" | "debts" | "cafe" | "fun" | "shopping" | "other";
+export type Expense = { id: string; name: string; amount: number; category: ExpenseCategory; necessary: boolean };
+export type Debt = { id: string; kind: DebtKind; name: string; balance: number; monthly: number; rate: number };
+export type Wish = { id: string; name: string; cost: number; months: number | null };
+export type Allocation = { mandatory: number; debt: number; reserve: number; wishes: number; growth: number };
 export type Profile = {
-  ageGroup: AgeGroup | null;
-  family: Family | null;
-  source: Source | null;
-  incomeType: IncomeType | null;
-  problems: Problem[];
-  goals: Goal[];
-  income: number;
-  partnerIncome: number;
-  mandatory: number;
-  allocation: Allocation;
-  debts: Debt[];
-  wishes: Wish[];
-  expenses: Expense[];
-  reviewDone: boolean;
-  largeText: boolean;
-  step: number;
+  ageGroup: AgeGroup | null; family: Family | null; source: Source | null; incomeType: IncomeType | null;
+  problems: Problem[]; goals: Goal[]; income: number; partnerIncome: number; mandatory: number;
+  allocation: Allocation; debts: Debt[]; wishes: Wish[]; expenses: Expense[]; reviewDone: boolean; largeText: boolean; step: number;
 };
-
 export const emptyProfile: Profile = {
-  ageGroup: null,
-  family: null,
-  source: null,
-  income: 0,
-  partnerIncome: 0,
-  mandatory: 0,
-  allocation: { mandatory: 50, debt: 35, reserve: 10, wishes: 5, growth: 0 },
-  debts: [],
-  wishes: [],
-  expenses: [],
-  reviewDone: false,
-  largeText: false,
-  step: 0,
-  problems: [],
-  goals: [],
-  ageGroup: null,
-  family: null,
-  source: null,
-  incomeType: null,
+  ageGroup: null, family: null, source: null, incomeType: null, problems: [], goals: [], income: 0, partnerIncome: 0,
+  mandatory: 0, allocation: { mandatory: 50, debt: 35, reserve: 10, wishes: 5, growth: 0 }, debts: [], wishes: [], expenses: [],
+  reviewDone: false, largeText: false, step: 0,
 };
-
 export const uid = () => Math.random().toString(36).slice(2, 10);
 export const totalIncome = (p: Profile) => p.income + (p.partnerIncome || 0);
-export const rub = (n: number) =>
-  new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(Math.round(n)) + " ₽";
+export const rub = (n: number) => new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 }).format(Math.round(n)) + " ₽";
