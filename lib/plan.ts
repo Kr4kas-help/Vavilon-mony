@@ -22,7 +22,7 @@ export function buildPlan(p:Profile):Plan {
   for(const d of q.debts){if(d.balance<=0)continue;d.balance+=(d.balance*d.rate)/1200;const x=Math.min(d.monthly,d.balance);d.balance-=x;minPaid+=x;}
   const money=Math.max(0,income-q.mandatory-minPaid), debtOn=q.debts.some(d=>d.balance>0.5);
   const raw={debt:debtOn?Math.max(0,allocation.debt):0,reserve:Math.max(0,allocation.reserve),wishes:wi<wl.length?Math.max(0,allocation.wishes):0,growth:grow?Math.max(0,allocation.growth):0};
-  const sum=raw.debt+raw.reserve+raw.wishes+raw.growth, w=sum>0?raw:{...raw,reserve:100}, denom=sum>0?sum:100;
+  const sum=raw.debt+raw.reserve+raw.wishes+raw.growth, w=sum>0?raw:{debt:0,reserve:100,wishes:0,growth:0}, denom=sum>0?sum:100;
   let debtPart=money*w.debt/denom, aRes=money*w.reserve/denom; const aWish=money*w.wishes/denom, aGr=money*w.growth/denom;
   let left=debtPart;
   for(const d of q.debts.filter(x=>x.balance>0.5).sort((a,b)=>b.rate-a.rate)){const x=Math.min(left,d.balance);d.balance-=x;left-=x;}
