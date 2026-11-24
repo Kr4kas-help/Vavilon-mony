@@ -7,7 +7,7 @@ export type Plan={ok:boolean;free:number;shares:Share[];rows:Row[];wishes:WishRe
 const GROWTH_YEAR=0.08;
 export function months(n:number){const y=Math.floor(n/12),m=n%12;const yy=y%10===1&&y%100!==11?'год':[2,3,4].includes(y%10)&&![12,13,14].includes(y%100)?'года':'лет';const o:string[]=[];if(y)o.push(y+' '+yy);if(m||!y)o.push(m+' мес.');return o.join(' ');}
 export function buildPlan(p:Profile):Plan {
- const a=p.allocation||{mandatory:50,debt:35,reserve:10,wishes:5,growth:0}; const allocation={debt:a.debt,reserve:a.reserve,wishes:a.wishes,growth:a.growth};
+ const a=p.allocation||{mandatory:50,debt:35,reserve:10,wishes:5,growth:0}; const allocation={mandatory:a.mandatory,debt:a.debt,reserve:a.reserve,wishes:a.wishes,growth:a.growth};
  const income=totalIncome(p), q:Profile={...p,income,allocation}; const tips:string[]=[], minDebt=q.debts.reduce((s,d)=>s+d.monthly,0), free=income-q.mandatory-minDebt;
  const fail:Plan={ok:false,free,shares:[],rows:[],wishes:[],debtFreeIn:null,tips}; if(income<=0){tips.push('Укажите доход фиксированной суммой в месяц: без неё план не посчитать.');return fail;} if(free<=0){tips.push('Обязательные расходы и платежи по долгам занимают весь доход. Это сигнал, с чего начать.');return fail;}
  const hasDebt=q.debts.some(d=>d.balance>0), grow=q.goals.includes('grow'); const wl=q.wishes.filter(x=>x.cost>0).sort((x,y)=>(x.months??9999)-(y.months??9999)); const results:WishResult[]=wl.map(x=>({id:x.id,name:x.name,cost:x.cost,wanted:x.months,reachedIn:null}));
