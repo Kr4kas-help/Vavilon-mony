@@ -7,7 +7,7 @@ export type Plan={ok:boolean;free:number;shares:Share[];rows:Row[];wishes:WishRe
 const GROWTH_YEAR=0.08;
 export function months(n:number){const y=Math.floor(n/12),m=n%12;const yy=y%10===1&&y%100!==11?'год':[2,3,4].includes(y%10)&&![12,13,14].includes(y%100)?'года':'лет';const o:string[]=[];if(y)o.push(y+' '+yy);if(m||!y)o.push(m+' мес.');return o.join(' ');}
 export function buildPlan(p:Profile):Plan {
- const income=totalIncome(p), allocation={debt:35,reserve:10,wishes:5,growth:0,...(p.allocation||{})}, q:Profile={...p,income,allocation};
+ const income=totalIncome(p), allocation={reserve:10,wishes:5,growth:0,...(p.allocation||{})}, q:Profile={...p,income,allocation};
  const tips:string[]=[], minDebt=q.debts.reduce((s,d)=>s+d.monthly,0), free=income-q.mandatory-minDebt;
  const fail:Plan={ok:false,free,shares:[],rows:[],wishes:[],debtFreeIn:null,tips};
  if(income<=0){tips.push('Укажите доход фиксированной суммой в месяц: без неё план не посчитать.');return fail;}
